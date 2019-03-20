@@ -1,6 +1,14 @@
 #!/usr/bin/env python3
 from tkinter import Tk, Frame, Button, Label, Entry
 from tkinter.filedialog import askopenfilename, asksaveasfilename
+from dataclasses import dataclass
+
+@dataclass
+class Spirolateral:
+    name: str
+    segment: int
+    angle: int
+
 
 
 class SpirolateralGUI(Frame):
@@ -10,7 +18,7 @@ class SpirolateralGUI(Frame):
         master.title("Spirolateral")
 
         self.main_menu = Frame(master, width=300, height=200)
-        self.grid_propagate(0)
+        self.main_menu.grid_propagate(0)
         self.main_menu.grid()
 
         self.add_spirolateral = Frame(master, width=300, height=200)
@@ -26,9 +34,13 @@ class SpirolateralGUI(Frame):
         self.load_spirolateral.grid_propagate(0)
 
         self.vcmd = (master.register(self.validate), '%P')
-        self.create_gui()
+        self.main_menu_grid()
 
-    def create_gui(self):
+    def main_menu_grid(self):
+        self.add_spirolateral.grid_forget()
+        self.delete_spirolateral.grid_forget()
+        self.save_spirolateral.grid_forget()
+        self.load_spirolateral.grid_forget()
         self.add = Button(self.main_menu, text="Add a spirolateral",
                           command=self.add_spirolateral_grid)
         self.add.grid(row=0, column=0)
@@ -48,6 +60,7 @@ class SpirolateralGUI(Frame):
         self.vcmd = (self.master.register(self.validate), '%P')
 
     def add_spirolateral_grid(self):
+        self.main_menu.grid_forget()
         self.spirolateral_name = Label(self.add_spirolateral, text="Name:")
         self.spirolateral_name.grid(row=0, column=0)
         self.spirolateral_name_entry = Entry(
