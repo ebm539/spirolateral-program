@@ -3,12 +3,12 @@ from tkinter import Tk, Frame, Button, Label, Entry
 from tkinter.filedialog import askopenfilename, asksaveasfilename
 from dataclasses import dataclass
 
+
 @dataclass
 class Spirolateral:
     name: str
     segment: int
     angle: int
-
 
 
 class SpirolateralGUI(Frame):
@@ -81,15 +81,29 @@ class SpirolateralGUI(Frame):
             self.add_spirolateral, validate='key', validatecommand=self.vcmd)
         self.spirolateral_angle_entry.grid(row=2, column=1)
 
+        self.quit = Button(self.add_spirolateral, text="Quit",
+                           command=self.master.quit)
+        self.quit.grid(row=4, column=0)
+
+        self.back = Button(self.add_spirolateral, text="Back",
+                           command=self.main_menu_grid)
+        self.back.grid(row=5, column=0)
+
+        self.enter = Button(self.add_spirolateral, text="Enter data",
+                           command=pass)
+        self.enter.grid(row=6, column=0)
+
         self.add_spirolateral.grid()
 
     def delete_spirolateral_grid(self):
-        pass
+        self.main_menu.grid_forget()
 
     def save_spirolateral_grid(self):
+        # self.main_menu.grid_forget()
         filename = asksaveasfilename()
 
     def load_spirolateral_grid(self):
+        # self.main_menu.grid_forget()
         filename = askopenfilename()
 
     def validate(self, user_input):
