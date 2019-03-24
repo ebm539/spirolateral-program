@@ -7,7 +7,7 @@ from dataclasses import dataclass
 @dataclass
 class Spirolateral:
     name: str
-    segment: int
+    segments: int
     angle: int
 
 
@@ -16,6 +16,8 @@ class SpirolateralGUI(Frame):
         super().__init__(master)
         self.master = master
         master.title("Spirolateral")
+
+        self.spirolaterals = []
 
         self.main_menu = Frame(master, width=300, height=200)
         self.main_menu.grid_propagate(0)
@@ -61,21 +63,20 @@ class SpirolateralGUI(Frame):
 
     def add_spirolateral_grid(self):
         self.main_menu.grid_forget()
-        self.spirolateral_name = Label(self.add_spirolateral, text="Name:")
+        self.spirolateral_name = Label(self.add_spirolateral, text="Name: ")
         self.spirolateral_name.grid(row=0, column=0)
-        self.spirolateral_name_entry = Entry(
-            self.add_spirolateral, validate='key', validatecommand=self.vcmd)
+        self.spirolateral_name_entry = Entry(self.add_spirolateral)
         self.spirolateral_name_entry.grid(row=0, column=1)
 
         self.spirolateral_segments = Label(
-            self.add_spirolateral, text=" Number of segments")
+            self.add_spirolateral, text="Number of segments: ")
         self.spirolateral_segments.grid(row=1, column=0)
         self.spirolateral_segments_entry = Entry(
             self.add_spirolateral, validate='key', validatecommand=self.vcmd)
         self.spirolateral_segments_entry.grid(row=1, column=1)
 
         self.spirolateral_angle = Label(
-            self.add_spirolateral, text="Angle of spirolateral")
+            self.add_spirolateral, text="Angle of spirolateral: ")
         self.spirolateral_angle.grid(row=2, column=0)
         self.spirolateral_angle_entry = Entry(
             self.add_spirolateral, validate='key', validatecommand=self.vcmd)
@@ -90,7 +91,7 @@ class SpirolateralGUI(Frame):
         self.back.grid(row=5, column=0)
 
         self.enter = Button(self.add_spirolateral, text="Enter data",
-                           command=pass)
+                            command=self.new_spirolateral)
         self.enter.grid(row=6, column=0)
 
         self.add_spirolateral.grid()
@@ -113,6 +114,11 @@ class SpirolateralGUI(Frame):
             raise ValueError
         except ValueError:
             return False
+
+    def new_spirolateral(self):
+        spirolateral = Spirolateral(self.spirolateral_name_entry.get(
+        ), self.spirolateral_segments_entry.get(), self.spirolateral_angle_entry.get())
+        self.spirolaterals.append(spirolateral)
 
 
 if __name__ == '__main__':
