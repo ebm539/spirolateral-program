@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
-from tkinter import Tk, Frame, Button, Label, Entry
+from tkinter import Tk, Frame, Button, Label, Entry, END
 from tkinter.filedialog import askopenfilename, asksaveasfilename
 from dataclasses import dataclass
-from ast import literal_eval
 import pickle
 
 
@@ -101,7 +100,7 @@ class SpirolateralGUI(Frame):
 
     def delete_spirolateral_grid(self):
         self.spirolateral_delete_no = Label(
-                self.delete_spirolateral, text="Spirolateral no. to delete: ")
+            self.delete_spirolateral, text="Spirolateral no. to delete: ")
         self.spirolateral_delete_no.grid(row=2, column=0)
         self.spirolateral_delete_no_entry = Entry(
             self.delete_spirolateral, validate='key', validatecommand=self.vcmd)
@@ -116,17 +115,20 @@ class SpirolateralGUI(Frame):
         self.back.grid(row=5, column=0)
 
         self.delete = Button(self.delete_spirolateral, text="Delete spirolateral",
-                            command=self.delete_spirolateral)
+                             command=self.delete_spirolateral)
         self.delete.grid(row=6, column=0)
         self.delete_spirolateral.grid()
 
     def save_spirolateral_grid(self):
         # self.main_menu.grid_forget()
         filename = asksaveasfilename()
-        pickle_out = open(filename, 'wb')
-        pickle.dump(self.spirolaterals, pickle_out)
-        pickle_out.close()
-            
+        try:
+            pickle_out = open(filename, 'wb')
+            pickle.dump(self.spirolaterals, pickle_out)
+            pickle_out.close()
+        except FileNotFoundError:
+            # user cancelled file selection
+            pass
 
     def load_spirolateral_grid(self):
         # self.main_menu.grid_forget()
@@ -134,8 +136,11 @@ class SpirolateralGUI(Frame):
         try:
             pickle_in = open(filename, 'rb')
             self.spirolaterals = pickle.load(pickle_in)
-        except ValueError:
+        except pickle.UnpicklingError:
             print("This error should be in the GUI. The data cannot be read.")
+        except FileNotFoundError:
+            # user cancelled file selection
+            pass
 
     def validate(self, user_input):
         try:
@@ -146,10 +151,19 @@ class SpirolateralGUI(Frame):
             return False
 
     def new_spirolateral(self):
-        self.spirolaterals.append(Spirolateral(self.spirolateral_name_entry.get(), self.spirolateral_segments_entry.get(), self.spirolateral_angle_entry.get()))
+        self.spirolaterals.append(Spirolateral(
+            self.spirolateral_name_entry.get(),
+            self.spirolateral_segments_entry.get(),
+            self.spirolateral_angle_entry.get()))
+        self.spirolateral_name_entry.delete(0, END)
+        self.spirolateral_segments_entry.delete(0, END)
+        self.spirolateral_angle_entry.delete(0, END)
 
     def delete_spirolateral(self):
         del self.spirolaterals[self.spirolateral_delete_no_entry.get()]
+        self.spirolateral_delete_no_entry.delete(0, END)
+        if not len(self.spirolaterals):
+            self.main_menu_grid()
 
 
 if __name__ == '__main__':
