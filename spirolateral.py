@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-from tkinter import Tk, Frame, Button, Label, Entry, END, DISABLED, NORMAL
+from tkinter import Tk, Frame, Button, Label, Entry, END, DISABLED, NORMAL, Message
 from tkinter.filedialog import askopenfilename, asksaveasfilename
 from dataclasses import dataclass
 import pickle
@@ -20,23 +20,27 @@ class SpirolateralGUI(Frame):
 
         self.spirolaterals = []
 
-        self.main_menu = Frame(master, width=300, height=200)
-        self.main_menu.grid_propagate(0)
+        self.main_menu = Frame(master, width=640, height=480)
+        #self.main_menu.grid_propagate(0)
+
+        self.spirolateral_list = Frame(master, width=300, height=200)
+        #self.spirolateral_list.grid_propagate(0)
 
         self.add_spirolateral = Frame(master, width=300, height=200)
-        self.add_spirolateral.grid_propagate(0)
+        #self.add_spirolateral.grid_propagate(0)
 
         self.delete_spirolateral = Frame(master, width=300, height=200)
-        self.delete_spirolateral.grid_propagate(0)
+        #self.delete_spirolateral.grid_propagate(0)
 
         self.save_spirolateral = Frame(master, width=300, height=200)
-        self.save_spirolateral.grid_propagate(0)
+        #self.save_spirolateral.grid_propagate(0)
 
         self.load_spirolateral = Frame(master, width=300, height=200)
-        self.load_spirolateral.grid_propagate(0)
+        #self.load_spirolateral.grid_propagate(0)
 
         self.vcmd = (master.register(self.validate), '%d', '%P')
         self.main_menu_grid()
+        self.spirolateral_list_grid()
 
     def main_menu_grid(self):
         self.add_spirolateral.grid_forget()
@@ -66,6 +70,15 @@ class SpirolateralGUI(Frame):
         self.quit.grid(row=4, column=0)
         self.vcmd = (self.master.register(self.validate), '%d', '%P')
         self.main_menu.grid()
+
+    def spirolateral_list_grid(self):
+        text = ""
+        for i in self.spirolaterals:
+            #text += "{} {} segments, {}°".format(i
+            print(i)
+        self.spirolateral_list_text = Message(self.spirolateral_list, text="Spirolateral list here")
+        self.spirolateral_list_text.grid()
+        self.spirolateral_list.grid(row=0, column=1)
 
     def add_spirolateral_grid(self):
         self.main_menu.grid_forget()
@@ -107,7 +120,8 @@ class SpirolateralGUI(Frame):
             self.delete_spirolateral, text="Spirolateral no. to delete: ")
         self.spirolateral_delete_no.grid(row=2, column=0)
         self.spirolateral_delete_no_entry = Entry(
-            self.delete_spirolateral, validate='key', validatecommand=self.vcmd)
+            self.delete_spirolateral, validate='key',
+            validatecommand=self.vcmd)
         self.spirolateral_delete_no_entry.grid(row=2, column=1)
         self.main_menu.grid_forget()
         self.quit = Button(self.delete_spirolateral, text="Quit",
@@ -118,7 +132,8 @@ class SpirolateralGUI(Frame):
                            command=self.main_menu_grid)
         self.back.grid(row=5, column=0)
 
-        self.delete = Button(self.delete_spirolateral, text="Delete spirolateral",
+        self.delete = Button(self.delete_spirolateral,
+                             text="Delete spirolateral",
                              command=self.delete_spirolateral)
         self.delete.grid(row=6, column=0)
         self.delete_spirolateral.grid()
@@ -164,12 +179,14 @@ class SpirolateralGUI(Frame):
         self.spirolateral_name_entry.delete(0, END)
         self.spirolateral_segments_entry.delete(0, END)
         self.spirolateral_angle_entry.delete(0, END)
+        self.spirolateral_list_grid()
 
     def delete_spirolateral(self):
         del self.spirolaterals[self.spirolateral_delete_no_entry.get()]
         self.spirolateral_delete_no_entry.delete(0, END)
         if not len(self.spirolaterals):
             self.main_menu_grid()
+        self.spirolateral_list_grid()
 
 
 if __name__ == '__main__':
