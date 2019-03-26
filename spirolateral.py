@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-from tkinter import Tk, Frame, Button, Label, Entry, END
+from tkinter import Tk, Frame, Button, Label, Entry, END, DISABLED, NORMAL
 from tkinter.filedialog import askopenfilename, asksaveasfilename
 from dataclasses import dataclass
 import pickle
@@ -35,7 +35,7 @@ class SpirolateralGUI(Frame):
         self.load_spirolateral = Frame(master, width=300, height=200)
         self.load_spirolateral.grid_propagate(0)
 
-        self.vcmd = (master.register(self.validate), '%P')
+        self.vcmd = (master.register(self.validate), '%d', '%P')
         self.main_menu_grid()
 
     def main_menu_grid(self):
@@ -51,6 +51,10 @@ class SpirolateralGUI(Frame):
             self.main_menu, text="Delete a spirolateral",
             command=self.delete_spirolateral_grid)
         self.delete.grid(row=1, column=0)
+        if len(self.spirolaterals):
+            self.delete.configure(state=NORMAL)
+        else:
+            self.delete.configure(state=DISABLED)
         self.save = Button(self.main_menu, text="Save a spirolateral",
                            command=self.save_spirolateral_grid)
         self.save.grid(row=2, column=0)
@@ -60,7 +64,7 @@ class SpirolateralGUI(Frame):
         self.quit = Button(self.main_menu, text="Quit",
                            command=self.master.quit)
         self.quit.grid(row=4, column=0)
-        self.vcmd = (self.master.register(self.validate), '%P')
+        self.vcmd = (self.master.register(self.validate), '%d', '%P')
         self.main_menu.grid()
 
     def add_spirolateral_grid(self):
@@ -142,8 +146,10 @@ class SpirolateralGUI(Frame):
             # user cancelled file selection
             pass
 
-    def validate(self, user_input):
+    def validate(self, action, user_input):
         try:
+            if action:
+                return True
             if int(user_input):
                 return True
             raise ValueError
