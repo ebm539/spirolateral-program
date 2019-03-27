@@ -1,7 +1,15 @@
 #!/usr/bin/env python3
-from tkinter import Tk, Frame, Button, Label, Entry, END, DISABLED, NORMAL, Message
-from tkinter.filedialog import askopenfilename, asksaveasfilename
-from dataclasses import dataclass
+try:
+    from tkinter import (Tk, Frame, Button, Label,
+                         Entry, END, DISABLED, NORMAL, Message)
+    from tkinter.filedialog import askopenfilename, asksaveasfilename
+except ModuleNotFoundError:
+    print("Please install tkinter.")
+    raise SystemExit
+try:
+    from dataclasses import dataclass
+except ModuleNotFoundError:
+    print("Please install Python 3.7 or above.")
 import pickle
 
 
@@ -21,22 +29,13 @@ class SpirolateralGUI(Frame):
         self.spirolaterals = []
 
         self.main_menu = Frame(master, width=640, height=480)
-        #self.main_menu.grid_propagate(0)
+        self.main_menu.grid_propagate(0)
 
-        self.spirolateral_list = Frame(master, width=300, height=200)
-        #self.spirolateral_list.grid_propagate(0)
-
-        self.add_spirolateral = Frame(master, width=300, height=200)
-        #self.add_spirolateral.grid_propagate(0)
-
-        self.delete_spirolateral = Frame(master, width=300, height=200)
-        #self.delete_spirolateral.grid_propagate(0)
-
-        self.save_spirolateral = Frame(master, width=300, height=200)
-        #self.save_spirolateral.grid_propagate(0)
-
-        self.load_spirolateral = Frame(master, width=300, height=200)
-        #self.load_spirolateral.grid_propagate(0)
+        self.spirolateral_list = Frame(master)
+        self.add_spirolateral = Frame(master)
+        self.delete_spirolateral = Frame(master)
+        self.save_spirolateral = Frame(master)
+        self.load_spirolateral = Frame(master)
 
         self.vcmd = (master.register(self.validate), '%d', '%P')
         self.main_menu_grid()
