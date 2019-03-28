@@ -6,18 +6,14 @@ try:
 except ModuleNotFoundError:
     print("Please install tkinter.")
     raise SystemExit
-try:
-    from dataclasses import dataclass
-except ModuleNotFoundError:
-    print("Please install Python 3.7 or above.")
 import pickle
 
 
-@dataclass
 class Spirolateral:
-    name: str
-    segments: int
-    angle: int
+    def __init__(self, name: str, segments: int, angle: int):
+        self.name = name
+        self.segments = segments
+        self.angle = angle
 
 
 class SpirolateralGUI(Frame):
@@ -73,9 +69,10 @@ class SpirolateralGUI(Frame):
     def spirolateral_list_grid(self):
         text = ""
         for i in self.spirolaterals:
-            #text += "{} {} segments, {}°".format(i
+            # text += "{} {} segments, {}°".format(i
             print(i)
-        self.spirolateral_list_text = Message(self.spirolateral_list, text="Spirolateral list here")
+        self.spirolateral_list_text = Message(
+            self.spirolateral_list, text="Spirolateral list here")
         self.spirolateral_list_text.grid()
         self.spirolateral_list.grid(row=0, column=1)
 
