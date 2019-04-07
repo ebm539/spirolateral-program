@@ -7,8 +7,7 @@ and allows for saving/loading list of spirolaterals
 # import modules as necessary
 try:
     from tkinter import (
-            Tk, Frame, Button, Label, Entry, END, DISABLED, NORMAL, Message,
-            Toplevel)
+        Tk, Frame, Button, Label, Entry, END, DISABLED, NORMAL, Toplevel)
     from tkinter.filedialog import askopenfilename, asksaveasfilename
 except ModuleNotFoundError:
     print("Please install tkinter.")
@@ -22,6 +21,25 @@ class Spirolateral:
         self.name = name
         self.times_table = times_table
         self.angle = angle
+        self.digitalList = []
+
+    def digital_root(self, n):
+        # calculates a digital root
+        return (n - 1) % 9 + 1 if n else 0
+
+    def digitCalc(self):
+        '''Calculates a 'times table list' that is used
+        as a range for the turtle to draw'''
+        for i in range(20):
+            test = (i+1)
+
+            n = int(test * self.timestable)
+            value = self.digit_root(n)
+            if value in self.digitalList:
+                break
+            else:
+                self.digitalList.append(value)
+        return(self.digitalList)
 
 
 # make class for spirolateral gui
@@ -34,12 +52,12 @@ class SpirolateralGUI(Frame):
         master.title("Spirolateral")
 
         self.spirolaterals = []
+        self.index = len(self.spirolaterals)
 
         self.header_row = Frame(master)
         self.main_menu = Frame(master)
         self.add_spirolateral = Frame(master)
 
-        self.vcmd = (master.register(self.validate), '%d', '%P')
         self.header_row_grid()
         self.main_menu_grid()
 
@@ -69,24 +87,39 @@ class SpirolateralGUI(Frame):
     def main_menu_grid(self):
         # forget previous grids, then grid main menu buttons as necessary
         self.add_spirolateral.grid_forget()
-        self.name = Label(self.main_menu, text="Spirolateral name")
+        self.name = Label(self.main_menu, text="Name")
         self.name.grid(row=0, column=0)
-        self.name_display = Label(self.main_menu, text="name here")
+        self.name_display = Label(self.main_menu, text="")
         self.name_display.grid(row=0, column=1)
         self.times_table = Label(self.main_menu,
-                                 text="Spirolateral times table")
+                                 text="Times table")
         self.times_table.grid(row=1, column=0)
         self.times_table_display = Label(self.main_menu,
-                                         text="times_table here")
+                                         text="")
         self.times_table_display.grid(row=1, column=1)
-        self.angle = Label(self.main_menu, text="Spirolateral name")
+        self.angle = Label(self.main_menu, text="Angle")
         self.angle.grid(row=2, column=0)
-        self.angle_display = Label(self.main_menu, text="angle here")
+        self.angle_display = Label(self.main_menu, text="")
+        self.update_display()
         self.angle_display.grid(row=2, column=1)
+
+        self.previous = Button(self.main_menu, text="Previous",
+                               command=self.display_previous)
+        self.previous.grid(row=3, column=0)
+
+        self.delete = Button(self.main_menu, text="Delete",
+                             command=self.delete_spirolateral)
+        self.delete.grid(row=3, column=1)
+
+        self.next = Button(self.main_menu, text="Next",
+                           command=self.display_next)
+        self.next.grid(row=3, column=2)
+
         self.main_menu.grid(row=1, column=0, sticky='nesw')
 
     def add_spirolateral_grid(self):
         # forget previous grid, then grid labels and text boxes as necessary
+        self.vcmd = (self.master.register(self.validate), '%d', '%P')
         self.main_menu.grid_forget()
         self.spirolateral_name = Label(self.add_spirolateral, text="Name: ")
         self.spirolateral_name.grid(row=0, column=0)
@@ -94,7 +127,7 @@ class SpirolateralGUI(Frame):
         self.spirolateral_name_entry.grid(row=0, column=1)
 
         self.spirolateral_times_table = Label(
-            self.add_spirolateral, text="Number of times_table: ")
+            self.add_spirolateral, text="Times_table: ")
         self.spirolateral_times_table.grid(row=1, column=0)
         self.spirolateral_times_table_entry = Entry(
             self.add_spirolateral, validate='key', validatecommand=self.vcmd)
@@ -110,7 +143,6 @@ class SpirolateralGUI(Frame):
         self.enter = Button(self.add_spirolateral, text="Enter data",
                             command=self.new_spirolateral)
         self.enter.grid(row=3, column=0)
-        self.vcmd = (self.master.register(self.validate), '%d', '%P')
 
         self.add_spirolateral.grid(row=1, column=0, sticky='nesw')
 
@@ -167,6 +199,29 @@ class SpirolateralGUI(Frame):
     def delete_spirolateral(self):
         # delete spirolateral from list
         pass
+
+    def display_previous(self):
+        self.index -= 1
+        if len(self.spirolaterals) == 0:
+            self.previous.configure(state=DISABLED)
+        else:
+            self.previous.configure(state=NORMAL)
+
+    def display_next(self):
+        self.index += 1
+        if len(self.spirolaterals) == self.index:
+            self.next.configure(state=DISABLED)
+        else:
+            self.next.configure(state=NORMAL)
+
+    def update_display(self):
+        if self.index:
+            self.name_display.configure(
+                    text=self.spirolaterals[self.index].name)
+            self.times_table_display.configure(
+                    text=self.spirolaterals[self.index].times_table)
+            self.angle_display.configure(
+                    text=self.spirolaterals[self.index].angle)
 
 
 if __name__ == '__main__':
