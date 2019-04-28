@@ -15,19 +15,19 @@ except ModuleNotFoundError:
 import pickle
 
 
-# make class for spirolaterals
+# define spirolateral class
 class Spirolateral:
     """
     define spirolateral class and functions
     functions not currently used
     """
+
     def __init__(self, name: str, times_table: int, angle: int):
         self.name = name
         self.times_table = times_table
         self.angle = angle
         # self.digitalList = []
 
-    """
     def digital_root(self, n):
         # calculates a digital root
         return (n - 1) % 9 + 1 if n else 0
@@ -45,10 +45,9 @@ class Spirolateral:
             else:
                 self.digitalList.append(value)
         return(self.digitalList)
-    """
 
 
-# make class for spirolateral gui
+# define spirolateral gui class
 class SpirolateralGUI(Frame):
     def __init__(self, master):
         # set frames and input validation
@@ -64,37 +63,27 @@ class SpirolateralGUI(Frame):
         self.main_menu = Frame(master)
         self.add_spirolateral = Frame(master)
 
-        self.header_row_grid()
-        self.main_menu_grid()
-        self.add_spirolateral_grid()
-        self.header_row.grid(row=0, column=0, sticky='nesw')
-        self.no_spirolaterals.grid(row=1, column=0)
-
-    def header_row_grid(self):
-        """define and grid buttons"""
         self.add_btn = Button(self.header_row, text="Add a spirolateral",
-                              command=self.change_to_add_spirolateral)
+                              command=self.show_add_spirolateral)
         self.add_btn.grid(row=0, column=0)
         self.show_btn = Button(
             self.header_row, text="Show spirolaterals",
-            command=self.change_to_main_menu)
+            command=self.show_main_menu)
         self.delete_header_btn = Button(
             self.header_row, text="Delete spirolateral",
             command=self.delete_spirolateral)
         self.delete_header_btn.grid(row=0, column=1)
         self.delete_header_btn.configure(state=DISABLED)
         self.save_btn = Button(self.header_row, text="Save spirolaterals",
-                               command=self.save_spirolateral_grid)
+                               command=self.save_spirolateral)
         self.save_btn.grid(row=0, column=2)
         self.load_btn = Button(self.header_row, text="Load spirolaterals",
-                               command=self.load_spirolateral_grid)
+                               command=self.load_spirolateral)
         self.load_btn.grid(row=0, column=3)
         self.quit_btn = Button(self.header_row, text="Quit",
                                command=self.master.quit)
         self.quit_btn.grid(row=0, column=4)
 
-    def main_menu_grid(self):
-        """define and grid buttons and labels"""
         self.no_spirolaterals = Label(
             self.master, text="There are no spirolaterals")
         self.name = Label(self.main_menu, text="Name")
@@ -114,17 +103,17 @@ class SpirolateralGUI(Frame):
             self.main_menu, text="Previous", command=self.display_previous)
         self.previous_btn.grid(row=3, column=0)
         self.previous_btn.configure(state=DISABLED)
-        self.delete_main_btn = Button(self.main_menu, text="Delete",
-                                      command=self.delete_spirolateral)
-        self.delete_main_btn.grid(row=3, column=1)
+        self.draw_btn = Button(self.main_menu, text="Draw",
+                               command=self.draw_spirolateral)
+        self.draw_btn.grid(row=3, column=1)
+        self.draw_btn.configure(state=DISABLED)
         self.next_btn = Button(
             self.main_menu, text="Next", command=self.display_next)
         self.next_btn.grid(row=3, column=2)
         self.next_btn.configure(state=DISABLED)
 
-    def add_spirolateral_grid(self):
-        """define and grid buttons, labels and text boxes"""
         self.vcmd = (self.master.register(self.validate), '%d', '%P', '%S')
+
         self.spirolateral_name = Label(self.add_spirolateral, text="Name: ")
         self.spirolateral_name.grid(row=0, column=0)
         self.spirolateral_name_entry = Entry(self.add_spirolateral)
@@ -154,7 +143,10 @@ class SpirolateralGUI(Frame):
                             command=self.new_spirolateral)
         self.enter.grid(row=3, column=0)
 
-    def change_to_main_menu(self):
+        self.header_row.grid(row=0, column=0, sticky='nesw')
+        self.no_spirolaterals.grid(row=1, column=0)
+
+    def show_main_menu(self):
         """
         forget add ui, grid show spirolateral ui
         and enable delete header button
@@ -165,7 +157,7 @@ class SpirolateralGUI(Frame):
         self.delete_header_btn.configure(state=NORMAL)
         self.update_display()
 
-    def change_to_add_spirolateral(self):
+    def show_add_spirolateral(self):
         """
         forget show spirolateral ui, grid add ui
         and disable delete header button
@@ -177,7 +169,7 @@ class SpirolateralGUI(Frame):
         self.no_spirolaterals.grid_forget()
         self.add_spirolateral.grid(row=1, column=0, sticky='nesw')
 
-    def save_spirolateral_grid(self):
+    def save_spirolateral(self):
         """save spirolaterals to file, supressing errors from dialog cancel"""
         try:
             pickle_out = open(asksaveasfilename(), 'wb')
@@ -187,7 +179,7 @@ class SpirolateralGUI(Frame):
             # user cancelled file selection
             pass
 
-    def load_spirolateral_grid(self):
+    def load_spirolateral(self):
         """
         load spirolaterals from file, supressing errors from dialog cancel
         display error if pickle fails
@@ -195,7 +187,7 @@ class SpirolateralGUI(Frame):
         try:
             pickle_in = open(askopenfilename(), 'rb')
             self.spirolaterals = pickle.load(pickle_in)
-            self.change_to_main_menu()
+            self.show_main_menu()
         except pickle.UnpicklingError:
             toplevel = Toplevel()
             toplevel.title("Error")
@@ -254,7 +246,7 @@ class SpirolateralGUI(Frame):
         self.spirolateral_name_entry.delete(0, END)
         self.spirolateral_times_table_entry.delete(0, END)
         self.spirolateral_angle_entry.delete(0, END)
-        self.change_to_main_menu()
+        self.show_main_menu()
 
     def delete_spirolateral(self):
         """delete selected spirolateral and update display"""
@@ -282,7 +274,7 @@ class SpirolateralGUI(Frame):
         if self.spirolaterals:
             self.no_spirolaterals.grid_forget()
             self.delete_header_btn.configure(state=NORMAL)
-            self.delete_main_btn.configure(state=NORMAL)
+            # self.draw_btn.configure(state=NORMAL)
             self.name_display.configure(
                 text=self.spirolaterals[self.index].name)
             self.times_table_display.configure(
@@ -315,6 +307,15 @@ class SpirolateralGUI(Frame):
             self.main_menu.grid_forget()
             self.no_spirolaterals.grid(row=1, column=0)
             self.delete_header_btn.configure(state=DISABLED)
+
+    def draw_spirolateral(self):
+        toplevel = Toplevel()
+        toplevel.title("Error")
+        error = Label(toplevel, text="Not yet implemented!")
+        error.grid()
+        continue_button = Button(toplevel, text="Continue",
+                                 command=toplevel.destroy)
+        continue_button.grid(row=1, column=0)
 
 
 if __name__ == '__main__':
