@@ -13,6 +13,11 @@ except ModuleNotFoundError:
     print("Please install tkinter.")
     raise SystemExit
 import pickle
+# try:
+#     from lib import otherSpiroClass as spirolateral_draw
+# except ModuleNotFoundError:
+#     print("Spirolateral drawing library not found, "
+#           "will not draw spirolaterals")
 
 
 # define spirolateral class
@@ -26,28 +31,26 @@ class Spirolateral:
         self.name = name
         self.times_table = times_table
         self.angle = angle
-        # self.digitalList = []
+        self.times_table_list = []
+        self.make_times_table_list()
 
-    def digital_root(self, n):
-        # calculates a digital root
+    @classmethod
+    def digital_root(cls, n):
+        """calculates a digital root"""
         return (n - 1) % 9 + 1 if n else 0
 
-    def digitCalc(self):
-        '''Calculates a 'times table list' that is used
-        as a range for the turtle to draw'''
-        for i in range(20):
-            test = (i+1)
-
-            n = int(test * self.timestable)
-            value = self.digital_root(n)
-            if value in self.digitalList:
+    def make_times_table_list(self):
+        """Makes a times table list"""
+        multipler = 1
+        while True:
+            value = self.digital_root(int(multipler * self.times_table))
+            if value in self.times_table_list:
                 break
             else:
-                self.digitalList.append(value)
-        return(self.digitalList)
+                self.times_table_list.append(value)
+                multipler += 1
 
 
-# define spirolateral gui class
 class SpirolateralGUI(Frame):
     def __init__(self, master):
         # set frames and input validation
@@ -59,10 +62,17 @@ class SpirolateralGUI(Frame):
         self.spirolaterals = []
         self.index = 0
 
-        self.header_row = Frame(master)
-        self.main_menu = Frame(master)
-        self.add_spirolateral = Frame(master)
+        self.make_header_row_widgets()
+        self.make_main_menu_widgets()
+        self.make_footer_row_widgets()
+        self.make_add_spirolateral_widgets()
 
+        self.header_row.grid(row=0, column=0, sticky='nesw')
+        self.no_spirolaterals.grid(row=1, column=0)
+
+    def make_header_row_widgets(self):
+        """make header_row widgets and grid as necessary"""
+        self.header_row = Frame(self.master)
         self.add_btn = Button(self.header_row, text="Add a spirolateral",
                               command=self.show_add_spirolateral)
         self.add_btn.grid(row=0, column=0)
@@ -84,6 +94,9 @@ class SpirolateralGUI(Frame):
                                command=self.master.quit)
         self.quit_btn.grid(row=0, column=4)
 
+    def make_main_menu_widgets(self):
+        """make main_menu widgets and grid as necessary"""
+        self.main_menu = Frame(self.master)
         self.no_spirolaterals = Label(
             self.master, text="There are no spirolaterals")
         self.name = Label(self.main_menu, text="Name")
@@ -98,22 +111,31 @@ class SpirolateralGUI(Frame):
         self.angle.grid(row=2, column=0)
         self.angle_display = Label(self.main_menu, text="")
         self.angle_display.grid(row=2, column=1)
+        self.times_table_list = Label(self.main_menu, text="Times table list")
+        self.times_table_list.grid(row=3, column=0)
+        self.times_table_list_display = Label(self.main_menu, text="")
+        self.times_table_list_display.grid(row=3, column=1)
 
+    def make_footer_row_widgets(self):
+        """make footer_row widgets and grid as necessary"""
+        self.footer_row = Frame(self.master)
         self.previous_btn = Button(
-            self.main_menu, text="Previous", command=self.display_previous)
-        self.previous_btn.grid(row=3, column=0)
+            self.footer_row, text="Previous", command=self.display_previous)
+        self.previous_btn.grid(row=0, column=0)
         self.previous_btn.configure(state=DISABLED)
-        self.draw_btn = Button(self.main_menu, text="Draw",
+        self.draw_btn = Button(self.footer_row, text="Draw",
                                command=self.draw_spirolateral)
-        self.draw_btn.grid(row=3, column=1)
+        self.draw_btn.grid(row=0, column=1)
         self.draw_btn.configure(state=DISABLED)
         self.next_btn = Button(
-            self.main_menu, text="Next", command=self.display_next)
-        self.next_btn.grid(row=3, column=2)
+            self.footer_row, text="Next", command=self.display_next)
+        self.next_btn.grid(row=0, column=2)
         self.next_btn.configure(state=DISABLED)
 
+    def make_add_spirolateral_widgets(self):
+        """make add_spirolateral widgets and grid as necessary"""
+        self.add_spirolateral = Frame(self.master)
         self.vcmd = (self.master.register(self.validate), '%d', '%P', '%S')
-
         self.spirolateral_name = Label(self.add_spirolateral, text="Name: ")
         self.spirolateral_name.grid(row=0, column=0)
         self.spirolateral_name_entry = Entry(self.add_spirolateral)
@@ -143,9 +165,6 @@ class SpirolateralGUI(Frame):
                             command=self.new_spirolateral)
         self.enter.grid(row=3, column=0)
 
-        self.header_row.grid(row=0, column=0, sticky='nesw')
-        self.no_spirolaterals.grid(row=1, column=0)
-
     def show_main_menu(self):
         """
         forget add ui, grid show spirolateral ui
@@ -163,6 +182,7 @@ class SpirolateralGUI(Frame):
         and disable delete header button
         """
         self.main_menu.grid_forget()
+        self.footer_row.grid_forget()
         self.add_btn.grid_forget()
         self.show_btn.grid(row=0, column=0)
         self.delete_header_btn.configure(state=DISABLED)
@@ -187,8 +207,14 @@ class SpirolateralGUI(Frame):
         try:
             pickle_in = open(askopenfilename(), 'rb')
             self.spirolaterals = pickle.load(pickle_in)
+            self.index = 0
             self.show_main_menu()
-        except pickle.UnpicklingError:
+        except (FileNotFoundError, TypeError):
+            # user cancelled file selection
+            pass
+        # would only catch pickle.UnpicklingError,
+        # but it didn't catch all errors...
+        except:
             toplevel = Toplevel()
             toplevel.title("Error")
             error = Label(toplevel, text="The data cannot be read")
@@ -196,11 +222,9 @@ class SpirolateralGUI(Frame):
             continue_button = Button(toplevel, text="Continue",
                                      command=toplevel.destroy)
             continue_button.grid(row=1, column=0)
-        except (FileNotFoundError, TypeError):
-            # user cancelled file selection
-            pass
 
-    def validate(self, action, value_if_allowed, value):
+    @classmethod
+    def validate(cls, action, value_if_allowed, value):
         """validate input - allow if delete or entering int"""
         if action == "0":
             return True
@@ -217,36 +241,47 @@ class SpirolateralGUI(Frame):
         make instance of spirolateral with data from text boxes,
         then append to list and delete text box data
         """
-        name = self.spirolateral_name_entry.get()
-        times_table = self.spirolateral_times_table_entry.get()
-        angle = self.spirolateral_angle_entry.get()
-
-        error_raised = False
         # forget previous error messages
         self.spirolateral_name_error.grid_forget()
         self.spirolateral_times_table_error.grid_forget()
         self.spirolateral_angle_error.grid_forget()
 
+        error_raised = False
+        try:
+            name = self.spirolateral_name_entry.get()
+        except UnicodeDecodeError:
+            # name is bad, so to not repeat code,
+            # we set name to something known to raise error
+            name = "🇳🇿"
+        times_table = self.spirolateral_times_table_entry.get()
+        angle = self.spirolateral_angle_entry.get()
+
         if name == "":
+            self.spirolateral_name_error.configure(text="No name entered")
             self.spirolateral_name_error.grid(row=0, column=2)
             error_raised = True
+        for i in name:
+            if ord(i) not in range(65536):
+                self.spirolateral_name_error.configure(
+                    text="Name contains emoji (or similar), "
+                    "which are not supported")
+                self.spirolateral_name_error.grid(row=0, column=2)
+                error_raised = True
         if times_table == "":
             self.spirolateral_times_table_error.grid(row=1, column=2)
             error_raised = True
         if angle == "":
             self.spirolateral_angle_error.grid(row=2, column=2)
             error_raised = True
-        if error_raised:
-            return False
-
-        self.spirolaterals.append(Spirolateral(
-            self.spirolateral_name_entry.get(),
-            self.spirolateral_times_table_entry.get(),
-            self.spirolateral_angle_entry.get()))
-        self.spirolateral_name_entry.delete(0, END)
-        self.spirolateral_times_table_entry.delete(0, END)
-        self.spirolateral_angle_entry.delete(0, END)
-        self.show_main_menu()
+        if not error_raised:
+            self.spirolaterals.append(Spirolateral(
+                self.spirolateral_name_entry.get(),
+                self.spirolateral_times_table_entry.get(),
+                self.spirolateral_angle_entry.get()))
+            self.spirolateral_name_entry.delete(0, END)
+            self.spirolateral_times_table_entry.delete(0, END)
+            self.spirolateral_angle_entry.delete(0, END)
+            self.show_main_menu()
 
     def delete_spirolateral(self):
         """delete selected spirolateral and update display"""
@@ -258,11 +293,17 @@ class SpirolateralGUI(Frame):
     def display_previous(self):
         """decrease index by 1, then update display"""
         self.index -= 1
+        # if index is lower than 0, wrap around
+        if self.index < 0:
+            self.index = len(self.spirolaterals) - 1
         self.update_display()
 
     def display_next(self):
         """increase index by 1, then update display"""
         self.index += 1
+        # if index is higher than no. of spirolaterals, wrap around
+        if self.index > len(self.spirolaterals) - 1:
+            self.index = 0
         self.update_display()
 
     def update_display(self):
@@ -281,37 +322,31 @@ class SpirolateralGUI(Frame):
                 text=self.spirolaterals[self.index].times_table)
             self.angle_display.configure(
                 text=self.spirolaterals[self.index].angle)
+            self.times_table_list_display.configure(
+                text=self.spirolaterals[self.index].times_table_list)
 
-            if self.index == 0:
+            if len(self.spirolaterals) == 1:
                 self.previous_btn.configure(state=DISABLED)
-                if len(self.spirolaterals) > 1:
-                    self.next_btn.configure(state=NORMAL)
-                not_min = False
-            else:
-                not_min = True
-            if len(self.spirolaterals) - 1 == self.index:
                 self.next_btn.configure(state=DISABLED)
-                if len(self.spirolaterals) > 1:
-                    self.previous_btn.configure(state=NORMAL)
-                not_max = False
             else:
-                not_max = True
-
-            # bodge, eww
-            if not_min and not_max:
                 self.previous_btn.configure(state=NORMAL)
                 self.next_btn.configure(state=NORMAL)
+
             self.main_menu.grid(row=1, column=0, sticky='nesw')
+            self.footer_row.grid(row=2, column=0, sticky='nesw')
 
         else:
             self.main_menu.grid_forget()
+            self.footer_row.grid_forget()
             self.no_spirolaterals.grid(row=1, column=0)
             self.delete_header_btn.configure(state=DISABLED)
 
-    def draw_spirolateral(self):
+    @classmethod
+    def draw_spirolateral(cls):
+        """Draw a spirolateral, when it's implemented"""
         toplevel = Toplevel()
         toplevel.title("Error")
-        error = Label(toplevel, text="Not yet implemented!")
+        error = Label(toplevel, text="Not yet implemented")
         error.grid()
         continue_button = Button(toplevel, text="Continue",
                                  command=toplevel.destroy)
