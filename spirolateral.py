@@ -7,8 +7,8 @@ and allows for saving/loading list of spirolaterals
 # import modules as necessary
 try:
     from tkinter import (
-        Tk, Frame, Button, Label, Entry, END, DISABLED, NORMAL, Toplevel,
-        Canvas, Scale, IntVar, Checkbutton)
+        Tk, Frame, Button, Label, Entry, END, DISABLED, NORMAL, Toplevel, Menu,
+        Canvas)
     from tkinter.filedialog import askopenfilename, asksaveasfilename
 except ModuleNotFoundError:
     print("Please install tkinter.")
@@ -72,40 +72,34 @@ class SpirolateralGUI(Frame):
         self.index = 0
         self.text_data_frame = Frame(self.master)
 
-        self.make_header_row_widgets()
+        self.make_menubar_widgets()
         self.make_main_menu_widgets()
         self.make_footer_row_widgets()
         self.make_add_spirolateral_widgets()
         self.make_draw_spirolateral_widgets()
 
-        self.header_row.grid(row=0, column=0, sticky='nesw')
         self.draw_spirolateral_frame.grid(row=0, column=1, sticky='nes')
         self.no_spirolaterals.grid(row=1, column=0)
         self.text_data_frame.grid(row=0, column=0, sticky='nsw')
+        self.master.config(menu=self.menubar)
+        self.master.columnconfigure(1, weight=1)
 
-    def make_header_row_widgets(self):
-        """make header_row widgets and grid as necessary"""
-        self.header_row = Frame(self.text_data_frame)
-        self.add_btn = Button(self.header_row, text="Add a spirolateral",
-                              command=self.show_add_spirolateral)
-        self.add_btn.grid(row=0, column=0)
-        self.show_btn = Button(
-            self.header_row, text="Show spirolaterals",
-            command=self.show_main_menu)
-        self.delete_header_btn = Button(
-            self.header_row, text="Delete spirolateral",
-            command=self.delete_spirolateral)
-        self.delete_header_btn.grid(row=0, column=1)
-        self.delete_header_btn.configure(state=DISABLED)
-        self.save_btn = Button(self.header_row, text="Save spirolaterals",
-                               command=self.save_spirolateral)
-        self.save_btn.grid(row=0, column=2)
-        self.load_btn = Button(self.header_row, text="Load spirolaterals",
-                               command=self.load_spirolateral)
-        self.load_btn.grid(row=0, column=3)
-        self.quit_btn = Button(self.header_row, text="Quit",
-                               command=self.master.quit)
-        self.quit_btn.grid(row=0, column=4)
+    def make_menubar_widgets(self):
+        """make menubar widgets"""
+        self.menubar = Menu(self.master)
+        self.menubar.add_command(
+            label="Add a spirolateral", command=self.show_add_spirolateral)
+        self.menubar.add_command(
+            label="Show spirolaterals", command=self.show_main_menu,
+            state=DISABLED)
+        self.menubar.add_command(
+            label="Delete spirolateral", command=self.delete_spirolateral,
+            state=DISABLED)
+        self.menubar.add_command(
+            label="Save spirolaterals", command=self.save_spirolateral)
+        self.menubar.add_command(
+            label="Load spirolaterals", command=self.load_spirolateral)
+        self.menubar.add_command(label="Quit", command=self.master.quit)
 
     def make_main_menu_widgets(self):
         """make main_menu widgets and grid as necessary"""
@@ -204,24 +198,24 @@ class SpirolateralGUI(Frame):
     def show_main_menu(self):
         """
         forget add ui, grid show spirolateral ui
-        and enable delete header button
+        and enable delete menubar button
         """
         self.add_spirolateral.grid_forget()
-        self.show_btn.grid_forget()
-        self.add_btn.grid(row=0, column=0)
-        self.delete_header_btn.configure(state=NORMAL)
+        self.menubar.entryconfig("Show spirolaterals", state=DISABLED)
+        self.menubar.entryconfig("Add a spirolateral", state=NORMAL)
+        self.menubar.entryconfig("Delete spirolateral", state=NORMAL)
         self.update_display()
 
     def show_add_spirolateral(self):
         """
         forget show spirolateral ui, grid add ui
-        and disable delete header button
+        and disable delete menubar button
         """
         self.main_menu.grid_forget()
         self.footer_row.grid_forget()
-        self.add_btn.grid_forget()
-        self.show_btn.grid(row=0, column=0)
-        self.delete_header_btn.configure(state=DISABLED)
+        self.menubar.entryconfig("Show spirolaterals", state=NORMAL)
+        self.menubar.entryconfig("Add a spirolateral", state=DISABLED)
+        self.menubar.entryconfig("Delete spirolateral", state=DISABLED)
         self.no_spirolaterals.grid_forget()
         self.add_spirolateral.grid(row=1, column=0, sticky='nesw')
         self.clear_spirolateral_drawing()
@@ -351,7 +345,7 @@ class SpirolateralGUI(Frame):
         """
         if self.spirolaterals:
             self.no_spirolaterals.grid_forget()
-            self.delete_header_btn.configure(state=NORMAL)
+            self.menubar.entryconfig("Delete spirolateral", state=NORMAL)
             self.name_display.configure(
                 text=self.spirolaterals[self.index].name)
             self.times_table_display.configure(
@@ -376,7 +370,7 @@ class SpirolateralGUI(Frame):
             self.main_menu.grid_forget()
             self.footer_row.grid_forget()
             self.no_spirolaterals.grid(row=1, column=0)
-            self.delete_header_btn.configure(state=DISABLED)
+            self.menubar.entryconfig("Delete spirolateral", state=DISABLED)
             self.clear_spirolateral_drawing()
 
     def clear_spirolateral_drawing(self):
