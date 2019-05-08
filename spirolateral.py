@@ -193,10 +193,12 @@ class SpirolateralGUI(Frame):
     def make_draw_spirolateral_widgets(self):
         """make draw_spirolateral widgets and grid as necessary"""
         self.draw_spirolateral_frame = Frame(self.master)
-        canvas = Canvas(self.draw_spirolateral_frame, height=480, width=360)
+        canvas = Canvas(self.draw_spirolateral_frame, height=480, width=480)
         canvas.grid(row=0, column=0)
         screen = turtle.TurtleScreen(canvas)
-        screen.screensize(480, 360)
+        screen.screensize(480, 480)
+        # TODO: allow for dynamically changing scale (although the program
+        # should automatically do that to fit to screen)
         self.drawing_turtle = spirolateral_draw.SpirolateralDrawer(screen, 6)
 
     def show_main_menu(self):
@@ -222,6 +224,7 @@ class SpirolateralGUI(Frame):
         self.delete_header_btn.configure(state=DISABLED)
         self.no_spirolaterals.grid_forget()
         self.add_spirolateral.grid(row=1, column=0, sticky='nesw')
+        self.clear_spirolateral_drawing()
 
     def save_spirolateral(self):
         """save spirolaterals to file, supressing errors from dialog cancel"""
@@ -374,18 +377,19 @@ class SpirolateralGUI(Frame):
             self.footer_row.grid_forget()
             self.no_spirolaterals.grid(row=1, column=0)
             self.delete_header_btn.configure(state=DISABLED)
-            # more compatibility...
-            self.turtleObject = self.drawing_turtle.turtleObject
-            self.ghostTurtle = self.drawing_turtle.ghostTurtle
-            spirolateral_draw.SpirolateralDrawer.clearScreen(self)
+            self.clear_spirolateral_drawing()
+
+    def clear_spirolateral_drawing(self):
+        # more compatibility...
+        self.turtleObject = self.drawing_turtle.turtleObject
+        self.ghostTurtle = self.drawing_turtle.ghostTurtle
+        spirolateral_draw.SpirolateralDrawer.clearScreen(self)
 
     def draw_spirolateral(self):
         """Draw a spirolateral"""
         # drawing_turtle.loadSpiro(self.spirolaterals[self.index])
 
         # compatibility, so that module can access digital root list and angle
-        # TODO: allow for dynamically changing scale (although the program
-        # should automatically do that to fit to screen)
 
         self.drawing_turtle.loadSpiro(ModuleCompatibility(
             self.spirolaterals[self.index].digital_root_list,
