@@ -43,14 +43,14 @@ class Spirolateral:
 
     def make_digital_root_list(self):
         """Makes a times table list"""
-        multipler = 1
+        multiplier = 1
         while True:
-            value = self.digital_root(int(multipler * self.times_table))
+            value = self.digital_root(int(multiplier * self.times_table))
             if value in self.digital_root_list:
                 break
             else:
                 self.digital_root_list.append(value)
-                multipler += 1
+                multiplier += 1
 
 
 class ModuleCompatibility:
@@ -161,7 +161,7 @@ class SpirolateralGUI(Frame):
         self.footer_row = Frame(self.text_data_frame)
         self.previous_btn = Button(
             self.footer_row, text="Previous", command=self.display_previous)
-        self.previous_btn.grid(row=0, column=0)
+        self.previous_btn.grid(row=0, column=0, padx=self.PADX, pady=self.PADY)
         self.previous_btn.configure(state=DISABLED)
         # self.draw_btn = Button(self.footer_row, text="Draw",
         #                       command=self.draw_spirolateral)
@@ -169,7 +169,7 @@ class SpirolateralGUI(Frame):
         self.next_btn = Button(
             self.footer_row, text="Next", command=self.display_next)
         # self.next_btn.grid(row=0, column=2)
-        self.next_btn.grid(row=0, column=1)
+        self.next_btn.grid(row=0, column=1, padx=self.PADX, pady=self.PADY)
         self.next_btn.configure(state=DISABLED)
 
     def make_add_spirolateral_widgets(self):
