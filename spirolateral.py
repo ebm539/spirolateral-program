@@ -5,6 +5,7 @@ and allows for saving/loading list of spirolaterals
 """
 
 # import modules as necessary
+# if tkinter isn't found, ask user to install
 try:
     from tkinter import (
         Tk, Frame, Button, Label, Entry, END, DISABLED, NORMAL, Toplevel, Menu,
@@ -15,6 +16,8 @@ except ModuleNotFoundError:
     raise SystemExit
 import pickle
 import turtle
+# if spirolateral drawing library isn't found, set variable to ask user
+# to read README for dependency install.
 try:
     from lib import otherSpiroClass as spirolateral_draw
     NO_DRAW = False
@@ -26,7 +29,6 @@ except ModuleNotFoundError:
 class Spirolateral:
     """
     define spirolateral class and functions
-    functions not currently used
     """
 
     def __init__(self, name: str, times_table: int, angle: int):
@@ -42,7 +44,7 @@ class Spirolateral:
         return (n - 1) % 9 + 1 if n else 0
 
     def make_digital_root_list(self):
-        """Makes a times table list"""
+        """Makes a digital root list, stops when list repeats"""
         multiplier = 1
         while True:
             value = self.digital_root(int(multiplier * self.times_table))
@@ -54,15 +56,17 @@ class Spirolateral:
 
 
 class ModuleCompatibility:
+    """class for compatibility with spirolateral drawing library, so it can get
+    the digital root list"""
     def __init__(self, dRootList: list, angle: int):
         self.dRootList = dRootList
         self.angle = angle
 
 
 class SpirolateralGUI(Frame):
+    """class for spirolateral gui"""
     def __init__(self, master):
-        # set frames and input validation
-        # then grid main menu and spirolateral list
+        # init master, then set title, width, height and padding
         super().__init__(master)
         self.master = master
         master.title("Spirolateral")
@@ -71,11 +75,15 @@ class SpirolateralGUI(Frame):
         self.PADX = 10
         self.PADY = 5
 
+        # set spirolateral list, index and main non_draw frame
         self.spirolaterals = []
         self.index = 0
         self.text_data_frame = Frame(
             self.master, width=self.WIDTH/2, height=self.HEIGHT)
 
+        # if no spirolateral drawing library, grid the message to install it
+        # otherwise, run as normal, gridding menubar, footer, main_menu,
+        # canvas
         if NO_DRAW:
             self.make_nodraw_widgets()
         else:
@@ -157,7 +165,7 @@ class SpirolateralGUI(Frame):
             row=3, column=1, sticky='nw', padx=self.PADX, pady=self.PADY)
 
     def make_footer_row_widgets(self):
-        """make footer_row widgets and grid as necessary"""
+        """make footer_row widgets and grid as necessary, initally disabled"""
         self.footer_row = Frame(self.text_data_frame)
         self.previous_btn = Button(
             self.footer_row, text="Previous", command=self.display_previous)
@@ -173,7 +181,8 @@ class SpirolateralGUI(Frame):
         self.next_btn.configure(state=DISABLED)
 
     def make_add_spirolateral_widgets(self):
-        """make add_spirolateral widgets and grid as necessary"""
+        """make add_spirolateral widgets and grid as necessary,
+        with input validation"""
         self.add_spirolateral = Frame(self.text_data_frame)
         self.vcmd = (self.master.register(self.validate), '%d', '%P', '%S')
         # self.autoupdate = IntVar()
@@ -237,7 +246,7 @@ class SpirolateralGUI(Frame):
     def show_main_menu(self):
         """
         forget add ui, grid show spirolateral ui
-        and enable delete menubar button
+        and enable add and delete menubar button
         """
         self.add_spirolateral.grid_forget()
         self.menubar.entryconfig("Show spirolaterals", state=DISABLED)
@@ -248,7 +257,7 @@ class SpirolateralGUI(Frame):
     def show_add_spirolateral(self):
         """
         forget show spirolateral ui, grid add ui
-        and disable delete menubar button
+        and disable add and delete menubar button
         """
         self.main_menu.grid_forget()
         self.footer_row.grid_forget()
@@ -285,6 +294,7 @@ class SpirolateralGUI(Frame):
         # would only catch pickle.UnpicklingError,
         # but it didn't catch all errors...
         except:
+            # this is a popup
             toplevel = Toplevel()
             toplevel.title("Error")
             error = Label(toplevel, text="The data cannot be read")
@@ -326,6 +336,7 @@ class SpirolateralGUI(Frame):
         times_table = self.spirolateral_times_table_entry.get()
         angle = self.spirolateral_angle_entry.get()
 
+        """if any entry is empty or if name contains emoji, raise error"""
         if name == "":
             self.spirolateral_name_error.configure(text="No name entered")
             self.spirolateral_name_error.grid(row=2, column=0, columnspan=2)
