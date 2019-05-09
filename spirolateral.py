@@ -19,7 +19,6 @@ try:
     from lib import otherSpiroClass as spirolateral_draw
     NO_DRAW = False
 except ModuleNotFoundError:
-    print("Spirolateral drawing library not found, cannot draw spirolaterals")
     NO_DRAW = True
 
 
@@ -67,10 +66,15 @@ class SpirolateralGUI(Frame):
         super().__init__(master)
         self.master = master
         master.title("Spirolateral")
+        self.WIDTH = 1000
+        self.HEIGHT = 500
+        self.PADX = 10
+        self.PADY = 5
 
         self.spirolaterals = []
         self.index = 0
-        self.text_data_frame = Frame(self.master)
+        self.text_data_frame = Frame(
+            self.master, width=self.WIDTH/2, height=self.HEIGHT)
 
         self.make_menubar_widgets()
         self.make_main_menu_widgets()
@@ -78,9 +82,13 @@ class SpirolateralGUI(Frame):
         self.make_add_spirolateral_widgets()
         self.make_draw_spirolateral_widgets()
 
-        self.draw_spirolateral_frame.grid(row=0, column=1, sticky='nes')
-        self.no_spirolaterals.grid(row=1, column=0)
-        self.text_data_frame.grid(row=0, column=0, sticky='nsw')
+        self.draw_spirolateral_frame.grid_propagate(0)
+        self.draw_spirolateral_frame.grid(row=0, column=1, sticky='nesw')
+        self.no_spirolaterals.grid(
+            row=1, column=0, sticky='nesw',
+            padx=self.PADX, pady=self.PADY, columnspan=2)
+        self.text_data_frame.grid_propagate(0)
+        self.text_data_frame.grid(row=0, column=0, sticky='nesw')
         self.master.config(menu=self.menubar)
         self.master.columnconfigure(1, weight=1)
 
@@ -106,23 +114,32 @@ class SpirolateralGUI(Frame):
         self.main_menu = Frame(self.text_data_frame)
         self.no_spirolaterals = Label(
             self.text_data_frame, text="There are no spirolaterals")
-        self.name = Label(self.main_menu, text="Name")
-        self.name.grid(row=0, column=0)
+        self.name = Label(self.main_menu, text="Name", anchor='nw')
+        self.name.grid(row=0, column=0, sticky='nw',
+                       padx=self.PADX, pady=self.PADY)
         self.name_display = Label(self.main_menu, text="")
-        self.name_display.grid(row=0, column=1)
-        self.times_table = Label(self.main_menu, text="Times table")
-        self.times_table.grid(row=1, column=0)
+        self.name_display.grid(row=0, column=1, sticky='nw',
+                               padx=self.PADX, pady=self.PADY)
+        self.times_table = Label(
+            self.main_menu, text="Times table", anchor='nw')
+        self.times_table.grid(row=1, column=0, sticky='nw',
+                              padx=self.PADX, pady=self.PADY)
         self.times_table_display = Label(self.main_menu, text="")
-        self.times_table_display.grid(row=1, column=1)
-        self.angle = Label(self.main_menu, text="Angle")
-        self.angle.grid(row=2, column=0)
+        self.times_table_display.grid(
+            row=1, column=1, sticky='nw', padx=self.PADX, pady=self.PADY)
+        self.angle = Label(self.main_menu, text="Angle", anchor='nw')
+        self.angle.grid(row=2, column=0, sticky='nw',
+                        padx=self.PADX, pady=self.PADY)
         self.angle_display = Label(self.main_menu, text="")
-        self.angle_display.grid(row=2, column=1)
+        self.angle_display.grid(
+            row=2, column=1, sticky='nw', padx=self.PADX, pady=self.PADY)
         self.digital_root_list = Label(
-            self.main_menu, text="Digital root list")
-        self.digital_root_list.grid(row=3, column=0)
+            self.main_menu, text="Digital root list", anchor='nw')
+        self.digital_root_list.grid(
+            row=3, column=0, sticky='nw', padx=self.PADX, pady=self.PADY)
         self.digital_root_list_display = Label(self.main_menu, text="")
-        self.digital_root_list_display.grid(row=3, column=1)
+        self.digital_root_list_display.grid(
+            row=3, column=1, sticky='nw', padx=self.PADX, pady=self.PADY)
 
     def make_footer_row_widgets(self):
         """make footer_row widgets and grid as necessary"""
@@ -134,8 +151,6 @@ class SpirolateralGUI(Frame):
         # self.draw_btn = Button(self.footer_row, text="Draw",
         #                       command=self.draw_spirolateral)
         # self.draw_btn.grid(row=0, column=1)
-        # if NO_DRAW:
-        #     self.draw_btn.configure(state=DISABLED)
         self.next_btn = Button(
             self.footer_row, text="Next", command=self.display_next)
         # self.next_btn.grid(row=0, column=2)
@@ -152,29 +167,35 @@ class SpirolateralGUI(Frame):
         #     variable=self.autoupdate)
         # self.autoupdate_checkbtn.grid(row=0, column=0, columnspan=2)
         self.spirolateral_name = Label(self.add_spirolateral, text="Name: ")
-        self.spirolateral_name.grid(row=1, column=0)
+        self.spirolateral_name.grid(
+            row=1, column=0, sticky='nw', padx=self.PADX, pady=self.PADY)
         self.spirolateral_name_entry = Entry(self.add_spirolateral)
-        self.spirolateral_name_entry.grid(row=1, column=1)
+        self.spirolateral_name_entry.grid(
+            row=1, column=1, sticky='nw', padx=self.PADX, pady=self.PADY)
         self.spirolateral_name_error = Label(
             self.add_spirolateral, text="No name entered")
 
         self.spirolateral_times_table = Label(
             self.add_spirolateral, text="Times table: ")
-        self.spirolateral_times_table.grid(row=2, column=0)
+        self.spirolateral_times_table.grid(
+            row=3, column=0, sticky='nw', padx=self.PADX, pady=self.PADY)
         self.spirolateral_times_table_entry = Entry(
             self.add_spirolateral, validate='key', validatecommand=self.vcmd)
-        self.spirolateral_times_table_entry.grid(row=2, column=1)
+        self.spirolateral_times_table_entry.grid(
+            row=3, column=1, sticky='nw', padx=self.PADX, pady=self.PADY)
         self.spirolateral_times_table_error = Label(
             self.add_spirolateral, text="No times table entered")
         # self.spirolateral_times_table_entry.bind(
         #     "<Key>", self.draw_spirolateral_part)
 
         self.spirolateral_angle = Label(
-            self.add_spirolateral, text="Angle of spirolateral: ")
-        self.spirolateral_angle.grid(row=3, column=0)
+            self.add_spirolateral, text="Angle of spirolateral: ", anchor='nw')
+        self.spirolateral_angle.grid(
+            row=5, column=0, sticky='nw', padx=self.PADX, pady=self.PADY)
         self.spirolateral_angle_entry = Entry(
             self.add_spirolateral, validate='key', validatecommand=self.vcmd)
-        self.spirolateral_angle_entry.grid(row=3, column=1)
+        self.spirolateral_angle_entry.grid(
+            row=5, column=1, sticky='nw', padx=self.PADX, pady=self.PADY)
         self.spirolateral_angle_error = Label(
             self.add_spirolateral, text="No angle entered")
         # self.spirolateral_angle_entry.bind(
@@ -182,18 +203,21 @@ class SpirolateralGUI(Frame):
 
         self.enter = Button(self.add_spirolateral, text="Enter data",
                             command=self.new_spirolateral)
-        self.enter.grid(row=4, column=0)
+        self.enter.grid(row=7, column=0, columnspan=2)
 
     def make_draw_spirolateral_widgets(self):
         """make draw_spirolateral widgets and grid as necessary"""
-        self.draw_spirolateral_frame = Frame(self.master)
-        canvas = Canvas(self.draw_spirolateral_frame, height=480, width=480)
+        self.draw_spirolateral_frame = Frame(
+            self.master, width=self.WIDTH/2, height=self.HEIGHT)
+        canvas = Canvas(
+            self.draw_spirolateral_frame, width=self.WIDTH/2,
+            height=self.HEIGHT)
         canvas.grid(row=0, column=0)
         screen = turtle.TurtleScreen(canvas)
-        screen.screensize(480, 480)
+        screen.screensize(self.WIDTH/2, self.HEIGHT)
         # TODO: allow for dynamically changing scale (although the program
         # should automatically do that to fit to screen)
-        self.drawing_turtle = spirolateral_draw.SpirolateralDrawer(screen, 6)
+        self.drawing_turtle = spirolateral_draw.SpirolateralDrawer(screen, 20)
 
     def show_main_menu(self):
         """
@@ -289,20 +313,22 @@ class SpirolateralGUI(Frame):
 
         if name == "":
             self.spirolateral_name_error.configure(text="No name entered")
-            self.spirolateral_name_error.grid(row=1, column=2)
+            self.spirolateral_name_error.grid(row=2, column=0, columnspan=2)
             error_raised = True
         for i in name:
             if ord(i) not in range(65536):
                 self.spirolateral_name_error.configure(
                     text="Name contains emoji (or similar), "
                     "which are not supported")
-                self.spirolateral_name_error.grid(row=1, column=2)
+                self.spirolateral_name_error.grid(
+                    row=2, column=0, columnspan=2)
                 error_raised = True
         if times_table == "":
-            self.spirolateral_times_table_error.grid(row=2, column=2)
+            self.spirolateral_times_table_error.grid(
+                row=4, column=0, columnspan=2)
             error_raised = True
         if angle == "":
-            self.spirolateral_angle_error.grid(row=3, column=2)
+            self.spirolateral_angle_error.grid(row=6, column=0, columnspan=2)
             error_raised = True
         if not error_raised:
             self.spirolaterals.append(Spirolateral(
@@ -369,7 +395,8 @@ class SpirolateralGUI(Frame):
         else:
             self.main_menu.grid_forget()
             self.footer_row.grid_forget()
-            self.no_spirolaterals.grid(row=1, column=0)
+            self.no_spirolaterals.grid(
+                row=1, column=0, padx=self.PADX, pady=self.PADY, columnspan=2)
             self.menubar.entryconfig("Delete spirolateral", state=DISABLED)
             self.clear_spirolateral_drawing()
 
