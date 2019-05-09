@@ -76,21 +76,36 @@ class SpirolateralGUI(Frame):
         self.text_data_frame = Frame(
             self.master, width=self.WIDTH/2, height=self.HEIGHT)
 
-        self.make_menubar_widgets()
-        self.make_main_menu_widgets()
-        self.make_footer_row_widgets()
-        self.make_add_spirolateral_widgets()
-        self.make_draw_spirolateral_widgets()
+        if NO_DRAW:
+            self.make_nodraw_widgets()
+        else:
+            self.make_menubar_widgets()
+            self.make_main_menu_widgets()
+            self.make_footer_row_widgets()
+            self.make_add_spirolateral_widgets()
+            self.make_draw_spirolateral_widgets()
+            self.draw_spirolateral_frame.grid_propagate(0)
+            self.draw_spirolateral_frame.grid(row=0, column=1, sticky='nesw')
+            self.no_spirolaterals.grid(
+                row=1, column=0, sticky='nesw',
+                padx=self.PADX, pady=self.PADY, columnspan=2)
+            self.master.config(menu=self.menubar)
+            self.master.columnconfigure(1, weight=1)
 
-        self.draw_spirolateral_frame.grid_propagate(0)
-        self.draw_spirolateral_frame.grid(row=0, column=1, sticky='nesw')
-        self.no_spirolaterals.grid(
-            row=1, column=0, sticky='nesw',
-            padx=self.PADX, pady=self.PADY, columnspan=2)
         self.text_data_frame.grid_propagate(0)
         self.text_data_frame.grid(row=0, column=0, sticky='nesw')
-        self.master.config(menu=self.menubar)
-        self.master.columnconfigure(1, weight=1)
+
+
+    def make_nodraw_widgets(self):
+        """make nodraw widgets"""
+        self.nodraw = Label(
+            self.text_data_frame,
+            text="Can't draw spirolaterals, please read README "
+            "and install requirements")
+        self.nodraw.grid(row=0, column=0)
+        self.nodraw_btn = Button(self.text_data_frame, text="Continue",
+                                 command=self.master.quit)
+        self.nodraw_btn.grid(row=1, column=0)
 
     def make_menubar_widgets(self):
         """make menubar widgets"""
