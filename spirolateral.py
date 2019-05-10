@@ -361,6 +361,8 @@ class SpirolateralGUI(Frame):
             self.spirolateral_name_entry.delete(0, END)
             self.spirolateral_times_table_entry.delete(0, END)
             self.spirolateral_angle_entry.delete(0, END)
+            # show newly added spirolateral on main menu
+            self.index = len(self.spirolaterals) - 1
             self.show_main_menu()
 
     def delete_spirolateral(self):
