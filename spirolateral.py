@@ -11,7 +11,7 @@ try:
         Tk, Frame, Button, Label, Entry, END, DISABLED, NORMAL, Toplevel, Menu,
         Canvas)
     from tkinter.filedialog import askopenfilename, asksaveasfilename
-except ModuleNotFoundError:
+except (ModuleNotFoundError, ImportError):
     print("Please install tkinter.")
     raise SystemExit
 import pickle
@@ -21,7 +21,7 @@ import turtle
 try:
     from lib import otherSpiroClass as spirolateral_draw
     NO_DRAW = False
-except ModuleNotFoundError:
+except (ModuleNotFoundError, ImportError):
     NO_DRAW = True
 
 
