@@ -58,14 +58,6 @@ class Spirolateral:
                 multiplier += 1
 
 
-class ModuleCompatibility:
-    """class for compatibility with spirolateral drawing library, so it can get
-    the digital root list"""
-    def __init__(self, dRootList: list, angle: int):
-        self.dRootList = dRootList
-        self.angle = angle
-
-
 class SpirolateralGUI(Frame):
     """class for spirolateral gui"""
     def __init__(self, master):
@@ -77,6 +69,7 @@ class SpirolateralGUI(Frame):
         self.HEIGHT = 500
         self.PADX = 10
         self.PADY = 5
+        self.scale_to_use = None
 
         # set spirolateral list, index and main non_draw frame
         self.spirolaterals = []
@@ -234,6 +227,8 @@ class SpirolateralGUI(Frame):
 
     def make_draw_spirolateral_widgets(self):
         """make draw_spirolateral widgets and grid as necessary"""
+        if self.scale_to_use is None:
+            self.scale_to_use = 1
         self.draw_spirolateral_frame = Frame(
             self.master, width=self.WIDTH/2, height=self.HEIGHT)
         canvas = Canvas(
@@ -244,7 +239,8 @@ class SpirolateralGUI(Frame):
         screen.screensize(self.WIDTH/2, self.HEIGHT)
         # TODO: allow for dynamically changing scale (although the program
         # should automatically do that to fit to screen)
-        self.drawing_turtle = spirolateral_draw.SpirolateralDrawer(screen, 20)
+        self.drawing_turtle = spirolateral_draw.SpirolateralDrawer(
+            screen, self.scale_to_use)
 
     def show_main_menu(self):
         """
@@ -431,20 +427,33 @@ class SpirolateralGUI(Frame):
             self.clear_spirolateral_drawing()
 
     def clear_spirolateral_drawing(self):
-        # more compatibility...
+        """clear canvas. set variables so library is happy"""
         self.turtleObject = self.drawing_turtle.turtleObject
         self.ghostTurtle = self.drawing_turtle.ghostTurtle
         spirolateral_draw.SpirolateralDrawer.clearScreen(self)
 
     def draw_spirolateral(self):
         """Draw a spirolateral"""
-        # drawing_turtle.loadSpiro(self.spirolaterals[self.index])
+        self.drawing_turtle.loadRawValues(
+            self.spirolaterals[self.index].name,
+            self.spirolaterals[self.index].times_table,
+            self.spirolaterals[self.index].angle)
 
-        # compatibility, so that module can access digital root list and angle
+        self.scale_to_use = self.drawing_turtle.bestScale()
 
-        self.drawing_turtle.loadSpiro(ModuleCompatibility(
-            self.spirolaterals[self.index].digital_root_list,
-            self.spirolaterals[self.index].angle))
+        self.clear_spirolateral_drawing()
+        
+        self.draw_spirolateral_frame.grid_forget()
+        self.make_draw_spirolateral_widgets()
+        self.draw_spirolateral_frame.grid(row=0, column=1, sticky='nesw')
+
+        self.drawing_turtle.loadRawValues(
+            self.spirolaterals[self.index].name,
+            self.spirolaterals[self.index].times_table,
+            self.spirolaterals[self.index].angle)
+
+
+
 
     # def draw_spirolateral_part(self, *args):
     #     print(self.autoupdate)
