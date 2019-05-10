@@ -293,7 +293,7 @@ class SpirolateralGUI(Frame):
         except:
             # this is a popup
             toplevel = Toplevel()
-            toplevel.title("Error")
+            toplevel.title("Spirolateral - Error")
             error = Label(toplevel, text="The data cannot be read")
             error.grid()
             continue_button = Button(toplevel, text="Continue",
