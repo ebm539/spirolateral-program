@@ -346,11 +346,11 @@ class SpirolateralGUI(Frame):
                 self.spirolateral_name_error.grid(
                     row=2, column=0, columnspan=2)
                 error_raised = True
-        if (times_table == "") or (times_table < 1):
+        if (times_table == "") or (int(times_table) < 1):
             self.spirolateral_times_table_error.grid(
                 row=4, column=0, columnspan=2)
             error_raised = True
-        if (angle == "") or (angle < 1):
+        if (angle == "") or (int(angle) < 1):
             self.spirolateral_angle_error.grid(row=6, column=0, columnspan=2)
             error_raised = True
         if not error_raised:
