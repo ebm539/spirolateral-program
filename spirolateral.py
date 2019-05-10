@@ -101,6 +101,7 @@ class SpirolateralGUI(Frame):
 
     def make_nodraw_widgets(self):
         """make nodraw widgets"""
+        self.master.title("Spirolateral - Error")
         self.nodraw = Label(
             self.text_data_frame,
             text="Can't draw spirolaterals, please read README "
