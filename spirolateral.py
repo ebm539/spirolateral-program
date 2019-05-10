@@ -204,7 +204,7 @@ class SpirolateralGUI(Frame):
         self.spirolateral_times_table_entry.grid(
             row=3, column=1, sticky='nw', padx=self.PADX, pady=self.PADY)
         self.spirolateral_times_table_error = Label(
-            self.add_spirolateral, text="No times table entered")
+            self.add_spirolateral, text="No times table above 0 entered")
         # self.spirolateral_times_table_entry.bind(
         #     "<Key>", self.draw_spirolateral_part)
 
@@ -217,7 +217,7 @@ class SpirolateralGUI(Frame):
         self.spirolateral_angle_entry.grid(
             row=5, column=1, sticky='nw', padx=self.PADX, pady=self.PADY)
         self.spirolateral_angle_error = Label(
-            self.add_spirolateral, text="No angle entered")
+            self.add_spirolateral, text="No angle above 0 entered")
         # self.spirolateral_angle_entry.bind(
         #     "<Key>", self.draw_spirolateral_part)
 
@@ -346,11 +346,11 @@ class SpirolateralGUI(Frame):
                 self.spirolateral_name_error.grid(
                     row=2, column=0, columnspan=2)
                 error_raised = True
-        if times_table == "":
+        if (times_table == "") or (times_table < 1):
             self.spirolateral_times_table_error.grid(
                 row=4, column=0, columnspan=2)
             error_raised = True
-        if angle == "":
+        if (angle == "") or (angle < 1):
             self.spirolateral_angle_error.grid(row=6, column=0, columnspan=2)
             error_raised = True
         if not error_raised:
