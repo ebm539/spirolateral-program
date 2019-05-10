@@ -34,10 +34,7 @@ class Spirolateral:
     def __init__(self, name: str, times_table: int, angle: int):
         self.name = name
         self.times_table = int(times_table)
-        # self.angle = int(angle)
-        # angle is constant because very low angles cause spirolateral to be
-        # drawn outside canvas at current scale...
-        self.angle = 90
+        self.angle = int(angle)
         self.digital_root_list = []
         self.make_digital_root_list()
 
@@ -146,12 +143,12 @@ class SpirolateralGUI(Frame):
         self.times_table_display = Label(self.main_menu, text="")
         self.times_table_display.grid(
             row=1, column=1, sticky='nw', padx=self.PADX, pady=self.PADY)
-        # self.angle = Label(self.main_menu, text="Angle", anchor='nw')
-        # self.angle.grid(row=2, column=0, sticky='nw',
-        #                 padx=self.PADX, pady=self.PADY)
-        # self.angle_display = Label(self.main_menu, text="")
-        # self.angle_display.grid(
-        #     row=2, column=1, sticky='nw', padx=self.PADX, pady=self.PADY)
+        self.angle = Label(self.main_menu, text="Angle", anchor='nw')
+        self.angle.grid(row=2, column=0, sticky='nw',
+                        padx=self.PADX, pady=self.PADY)
+        self.angle_display = Label(self.main_menu, text="")
+        self.angle_display.grid(
+            row=2, column=1, sticky='nw', padx=self.PADX, pady=self.PADY)
         self.digital_root_list = Label(
             self.main_menu, text="Digital root list", anchor='nw')
         self.digital_root_list.grid(
@@ -208,16 +205,16 @@ class SpirolateralGUI(Frame):
         # self.spirolateral_times_table_entry.bind(
         #     "<Key>", self.draw_spirolateral_part)
 
-        # self.spirolateral_angle = Label(
-        #     self.add_spirolateral, text="Angle of spirolateral: ", anchor='nw')
-        # self.spirolateral_angle.grid(
-        #     row=5, column=0, sticky='nw', padx=self.PADX, pady=self.PADY)
-        # self.spirolateral_angle_entry = Entry(
-        #     self.add_spirolateral, validate='key', validatecommand=self.vcmd)
-        # self.spirolateral_angle_entry.grid(
-        #     row=5, column=1, sticky='nw', padx=self.PADX, pady=self.PADY)
-        # self.spirolateral_angle_error = Label(
-        #     self.add_spirolateral, text="No angle entered")
+        self.spirolateral_angle = Label(
+            self.add_spirolateral, text="Angle of spirolateral: ", anchor='nw')
+        self.spirolateral_angle.grid(
+            row=5, column=0, sticky='nw', padx=self.PADX, pady=self.PADY)
+        self.spirolateral_angle_entry = Entry(
+            self.add_spirolateral, validate='key', validatecommand=self.vcmd)
+        self.spirolateral_angle_entry.grid(
+            row=5, column=1, sticky='nw', padx=self.PADX, pady=self.PADY)
+        self.spirolateral_angle_error = Label(
+            self.add_spirolateral, text="No angle entered")
         # self.spirolateral_angle_entry.bind(
         #     "<Key>", self.draw_spirolateral_part)
 
@@ -323,7 +320,7 @@ class SpirolateralGUI(Frame):
         # forget previous error messages
         self.spirolateral_name_error.grid_forget()
         self.spirolateral_times_table_error.grid_forget()
-        # self.spirolateral_angle_error.grid_forget()
+        self.spirolateral_angle_error.grid_forget()
 
         error_raised = False
         try:
@@ -333,7 +330,7 @@ class SpirolateralGUI(Frame):
             # we set name to something known to raise error
             name = "🇳🇿"
         times_table = self.spirolateral_times_table_entry.get()
-        # angle = self.spirolateral_angle_entry.get()
+        angle = self.spirolateral_angle_entry.get()
 
         """if any entry is empty or if name contains emoji, raise error"""
         if name == "":
@@ -352,18 +349,17 @@ class SpirolateralGUI(Frame):
             self.spirolateral_times_table_error.grid(
                 row=4, column=0, columnspan=2)
             error_raised = True
-        # if angle == "":
-        #     self.spirolateral_angle_error.grid(row=6, column=0, columnspan=2)
-        #     error_raised = True
+        if angle == "":
+            self.spirolateral_angle_error.grid(row=6, column=0, columnspan=2)
+            error_raised = True
         if not error_raised:
             self.spirolaterals.append(Spirolateral(
                 self.spirolateral_name_entry.get(),
-                self.spirolateral_times_table_entry.get(), 90
-        #         self.spirolateral_angle_entry.get()))
-            ))
+                self.spirolateral_times_table_entry.get(),
+                self.spirolateral_angle_entry.get()))
             self.spirolateral_name_entry.delete(0, END)
             self.spirolateral_times_table_entry.delete(0, END)
-            # self.spirolateral_angle_entry.delete(0, END)
+            self.spirolateral_angle_entry.delete(0, END)
             self.show_main_menu()
 
     def delete_spirolateral(self):
@@ -402,8 +398,8 @@ class SpirolateralGUI(Frame):
                 text=self.spirolaterals[self.index].name)
             self.times_table_display.configure(
                 text=self.spirolaterals[self.index].times_table)
-            # self.angle_display.configure(
-            #     text=self.spirolaterals[self.index].angle)
+            self.angle_display.configure(
+                text=self.spirolaterals[self.index].angle)
             self.digital_root_list_display.configure(
                 text=self.spirolaterals[self.index].digital_root_list)
 
