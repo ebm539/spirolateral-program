@@ -66,7 +66,9 @@ class SpirolateralGUI(Frame):
         self.HEIGHT = 500
         self.PADX = 10
         self.PADY = 5
-        self.scale_to_use = None
+        # we need a scale to draw the spirolateral
+        # this is changed later
+        self.scale_to_use = 1
 
         # set spirolateral list, index and main non_draw frame
         self.spirolaterals = []
@@ -224,8 +226,6 @@ class SpirolateralGUI(Frame):
 
     def make_draw_spirolateral_widgets(self):
         """make draw_spirolateral widgets and grid as necessary"""
-        if self.scale_to_use is None:
-            self.scale_to_use = 1
         self.draw_spirolateral_frame = Frame(
             self.master, width=self.WIDTH/2, height=self.HEIGHT)
         canvas = Canvas(
@@ -429,27 +429,29 @@ class SpirolateralGUI(Frame):
         spirolateral_draw.SpirolateralDrawer.clearScreen(self)
 
     def draw_spirolateral(self):
-        """Draw a spirolateral"""
+        """Draw a spirolateral. This is a bodge (we draw once to get min/max
+        values, then get scale, clear, regrid with new scale, then draw again),
+        but works"""
+        # we need this to determine min/max values
         self.drawing_turtle.loadRawValues(
             self.spirolaterals[self.index].name,
             self.spirolaterals[self.index].times_table,
             self.spirolaterals[self.index].angle)
-
+        
+        # get the scale
         self.scale_to_use = self.drawing_turtle.bestScale()
 
+        # clear previous wrong scale drawing
         self.clear_spirolateral_drawing()
-        
-        self.draw_spirolateral_frame.grid_forget()
+        # set new best scale
         self.make_draw_spirolateral_widgets()
         self.draw_spirolateral_frame.grid(row=0, column=1, sticky='nesw')
 
+        # redraw
         self.drawing_turtle.loadRawValues(
             self.spirolaterals[self.index].name,
             self.spirolaterals[self.index].times_table,
             self.spirolaterals[self.index].angle)
-
-
-
 
     # def draw_spirolateral_part(self, *args):
     #     print(self.autoupdate)
